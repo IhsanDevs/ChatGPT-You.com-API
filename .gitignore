@@ -130,4 +130,3 @@ dist
 .pnp.*
 
 ./chats.json
-/chats/*
