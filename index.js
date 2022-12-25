@@ -27,7 +27,7 @@ puppeteer.use(StealthPlugin());
 
 let url = "https://you.com/api/youchatStreaming";
 
-app.get("/chat", async (req, res) => {
+app.get("/", async (req, res) => {
   // get question param from url
   let question = req.query.question;
 
