@@ -14,7 +14,6 @@
  * @license: MIT
  * @link: https://ihsandevs.com
  */
-
 const express = require("express");
 const app = express();
 const port = 3000;
