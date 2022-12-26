@@ -38,6 +38,10 @@ atau
 node index.js
 ```
 
+# Change Port
+
+***[If you want to change port, see in here](https://s.id/1tOWy)***
+
 visit http://localhost:3000/?question=hello
 
 ## API
