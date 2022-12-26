@@ -14,6 +14,7 @@
  * @license: MIT
  * @link: https://ihsandevs.com
  */
+
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -24,7 +25,15 @@ const converter = new showdown.Converter();
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
+var marked = require("marked");
+var TerminalRenderer = require("marked-terminal");
+const fs = require("fs");
+marked.setOptions({
+  // Define custom renderer
+  renderer: new TerminalRenderer(),
+});
 
+// Show the parsed data
 let url = "https://you.com/api/youchatStreaming";
 
 app.get("/", async (req, res) => {
@@ -48,7 +57,10 @@ app.get("/", async (req, res) => {
   let message = "";
   // puppeteer usage as normal
   puppeteer
-    .launch({ headless: true, executablePath: executablePath() })
+    .launch({
+      headless: true,
+      executablePath: executablePath(),
+    })
     .then(async (browser) => {
       const page = await browser.newPage();
       await page
@@ -88,14 +100,27 @@ app.get("/", async (req, res) => {
             }
           });
 
+          // check if message is empty
+          if (message.length == 0) {
+            // send error message to client
+            res.json({
+              error: "There is no answer for this question",
+            });
+            return;
+          }
           // send message to client
           res.json({
             markdown: message,
             html: converter.makeHtml(message),
           });
 
+          console.log(
+            marked.marked(
+              "## Question: " + question + "\n## Answer: " + message + "\n\n"
+            )
+          );
+
           // save question and answer to file chats.json
-          let fs = require("fs");
           let chats = JSON.parse(fs.readFileSync("chats.json"));
           chats.push({
             question: question,
@@ -121,4 +146,44 @@ app.get("/histories", async (req, res) => {
   // send html to client
   res.send(html);
 });
-app.listen(port, () => console.log(`ChatBOT listening on port ${port}!`));
+
+app.get("/clear", async (req, res) => {
+  // get chats param from chats.json file
+  let fs = require("fs");
+  fs.writeFileSync("chats.json", JSON.stringify([]));
+
+  res.json({
+    status: "success",
+    message: "Histories cleared",
+  });
+
+  console.log(marked.marked("`Histories cleared`\n\n"));
+});
+
+app.listen(port, () => {
+  console.clear();
+  console.log(
+    marked.marked(
+      "`====================================================================`"
+    ),
+    marked.marked(
+      "## YouChat API Server running on port `" + port + "`. Enjoy!"
+    ),
+    marked.marked(
+      "_(Get Message)_ **GET** `http://localhost:3000/?question=hello`"
+    ),
+    marked.marked(
+      "_(Get Histories)_ **GET** `http://localhost:3000/histories`"
+    ),
+    marked.marked("_(Clear Histories)_ **GET** `http://localhost:3000/clear`"),
+    // generate a info about version, author and license
+    marked.marked(
+      "## Version: 1.0.0 | Author: [Ihsan Devs](https://ihsandevs.com)"
+    ),
+    marked.marked(
+      "`====================================================================`"
+    ),
+    // show histories from chats.json file
+    marked.marked("## Histories:")
+  );
+});
