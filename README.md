@@ -23,7 +23,7 @@ cd ChatGPT-You.com-API
 ```
 
 ```bash
-npm install
+npm install -g npm@latest
 ```
 
 ```bash
@@ -33,7 +33,9 @@ cp chats.json.example chats.json
 ## Usage
 
 ```bash
-npm start
+node .
+atau
+node index.js
 ```
 
 visit http://localhost:3000/?question=hello
