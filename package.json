@@ -6,7 +6,7 @@
   "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js --ignore chats.json"
+    "start": "nodemon index.js --ignore chats.json\n node index.js"
   },
   "keywords": [],
   "author": "",
